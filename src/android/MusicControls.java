@@ -147,7 +147,6 @@ public class MusicControls extends CordovaPlugin {
 			this.cordova.getThreadPool().execute(new Runnable() {
 				public void run() {
 					notification.updateNotification(infos);
-					notification.setColorized(true);
 					
 					// track title
 					metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, infos.track);
@@ -299,7 +298,7 @@ public class MusicControls extends CordovaPlugin {
 		}
 	}
 
-	// get Remote image
+	// get Base64 image
 	private Bitmap getBitmapFromBase64(String b64img) {
 		try {
 			String cleanImage = b64img.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");

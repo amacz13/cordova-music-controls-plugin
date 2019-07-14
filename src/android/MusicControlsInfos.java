@@ -3,6 +3,7 @@ package com.homerours.musiccontrols;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.util.Base64;
 
 public class MusicControlsInfos{
 	public String artist;

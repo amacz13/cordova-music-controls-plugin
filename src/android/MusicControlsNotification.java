@@ -94,12 +94,16 @@ public class MusicControlsNotification {
 	// Get image from url
 	private void getBitmapCover(String coverURL){
 		try{
-			if(coverURL.matches("^(https?|ftp)://.*$"))
+			if(coverURL.matches("^(https?|ftp)://.*$")){
 				// Remote image
-				this.bitmapCover = getBitmapFromURL(coverURL);
-			else{
+				return getBitmapFromURL(coverURL);
+			}
+			else if (coverURL.contains("data:image/")) {
+				return getBitmapFromBase64(coverURL);
+			}
+			else {
 				// Local image
-				this.bitmapCover = getBitmapFromLocal(coverURL);
+				return getBitmapFromLocal(coverURL);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -147,6 +151,19 @@ public class MusicControlsNotification {
 		}
 	}
 
+	// get Base64 image
+	private Bitmap getBitmapFromBase64(String b64img) {
+		try {
+			String cleanImage = b64img.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
+			byte[] decodedString = Base64.decode(b64img, Base64.DEFAULT);
+			Bitmap img = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+			return img;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
 	private void createBuilder(){
 		Context context = cordovaActivity;
 		Notification.Builder builder = new Notification.Builder(context);
@@ -162,6 +179,7 @@ public class MusicControlsNotification {
 			builder.setContentText(infos.artist);
 		}
 		builder.setWhen(0);
+		builder.setColorized(true);
 
 		// set if the notification can be destroyed by swiping
 		if (infos.dismissable){
