@@ -24,6 +24,7 @@ import android.os.Build;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Base64;
 
 import android.app.NotificationChannel;
 
