@@ -147,6 +147,7 @@ public class MusicControls extends CordovaPlugin {
 			this.cordova.getThreadPool().execute(new Runnable() {
 				public void run() {
 					notification.updateNotification(infos);
+					notification.setColorized(true);
 					
 					// track title
 					metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, infos.track);
@@ -240,9 +241,13 @@ public class MusicControls extends CordovaPlugin {
 	// Get image from url
 	private Bitmap getBitmapCover(String coverURL){
 		try{
-			if(coverURL.matches("^(https?|ftp)://.*$"))
+			if(coverURL.matches("^(https?|ftp)://.*$")){
 				// Remote image
 				return getBitmapFromURL(coverURL);
+			}
+			else if (coverURL.contains("data:image/")) {
+				return getBitmapFromBase64(coverURL);
+			}
 			else {
 				// Local image
 				return getBitmapFromLocal(coverURL);
@@ -288,6 +293,19 @@ public class MusicControls extends CordovaPlugin {
 			InputStream input = connection.getInputStream();
 			Bitmap myBitmap = BitmapFactory.decodeStream(input);
 			return myBitmap;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
+	// get Remote image
+	private Bitmap getBitmapFromBase64(String b64img) {
+		try {
+			String cleanImage = b64img.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
+			byte[] decodedString = Base64.decode(b64img, Base64.DEFAULT);
+			Bitmap img = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+			return img;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
