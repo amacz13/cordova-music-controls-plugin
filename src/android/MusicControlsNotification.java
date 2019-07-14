@@ -97,14 +97,14 @@ public class MusicControlsNotification {
 		try{
 			if(coverURL.matches("^(https?|ftp)://.*$")){
 				// Remote image
-				return getBitmapFromURL(coverURL);
+				this.bitmapCover =  getBitmapFromURL(coverURL);
 			}
 			else if (coverURL.contains("data:image/")) {
-				return getBitmapFromBase64(coverURL);
+				this.bitmapCover =  getBitmapFromBase64(coverURL);
 			}
 			else {
 				// Local image
-				return getBitmapFromLocal(coverURL);
+				this.bitmapCover =  getBitmapFromLocal(coverURL);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -136,6 +136,19 @@ public class MusicControlsNotification {
 		}
 	}
 
+	// get Base64 image
+	private Bitmap getBitmapFromBase64(String b64img) {
+		try {
+			String cleanImage = b64img.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
+			byte[] decodedString = Base64.decode(b64img, Base64.DEFAULT);
+			Bitmap img = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+			return img;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
 	// get Remote image
 	private Bitmap getBitmapFromURL(String strURL) {
 		try {
@@ -146,19 +159,6 @@ public class MusicControlsNotification {
 			InputStream input = connection.getInputStream();
 			Bitmap myBitmap = BitmapFactory.decodeStream(input);
 			return myBitmap;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
-
-	// get Base64 image
-	private Bitmap getBitmapFromBase64(String b64img) {
-		try {
-			String cleanImage = b64img.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
-			byte[] decodedString = Base64.decode(b64img, Base64.DEFAULT);
-			Bitmap img = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-			return img;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
@@ -180,7 +180,6 @@ public class MusicControlsNotification {
 			builder.setContentText(infos.artist);
 		}
 		builder.setWhen(0);
-		builder.setColorized(true);
 
 		// set if the notification can be destroyed by swiping
 		if (infos.dismissable){
